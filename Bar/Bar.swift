@@ -25,7 +25,7 @@ public class Bar: UIView {
     
     private let constant = Constant()
     private var fonts: [UInt: UIFont] = [UIControl.State.normal.rawValue: UIFont.systemFont(ofSize: 12),
-                                         UIControl.State.selected.rawValue: UIFont.systemFont(ofSize: 12)]
+                                         UIControl.State.selected.rawValue: UIFont.systemFont(ofSize: 12, weight: .bold)]
     
     private var stackView: UIStackView!
     private var lineView: UIView!
@@ -59,6 +59,7 @@ public class Bar: UIView {
     
     public func add(items: [Tab]) {
         items.forEach { self.add(item: $0) }
+        selectedIndex = 0
     }
 }
 
@@ -90,13 +91,13 @@ private extension Bar {
         lineSetup()
         
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: layout.topSpacing),
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             lineView.heightAnchor.constraint(equalToConstant: layout.lineHeight),
             lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
             lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            lineView.trailingAnchor.constraint(equalTo: trailingAnchor)])
+            lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing)])
         
         tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
@@ -175,6 +176,8 @@ public extension Bar {
         var itemWidth: CGFloat = 70
         var itemSpacing: CGFloat = 1
         var lineHeight: CGFloat = 2
+        var topSpacing: CGFloat = 10
+        var bottomSpacing: CGFloat = 6
     }
     
     private struct Constant {

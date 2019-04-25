@@ -30,7 +30,7 @@ class BarItem: UIControl {
     
     private let constant = Constant()
     private var fonts: [UInt: UIFont] = [UIControl.State.normal.rawValue: UIFont.systemFont(ofSize: 12),
-                                         UIControl.State.selected.rawValue: UIFont.systemFont(ofSize: 12)]
+                                         UIControl.State.selected.rawValue: UIFont.systemFont(ofSize: 12, weight: .bold)]
     
     private var imageView: UIImageView!
     private var titleLabel: UILabel!
@@ -64,19 +64,21 @@ private extension BarItem {
         imageView = UIImageView()
         imageView.contentMode = .center
         imageView.tintColor = tintColor
-        imageView.isUserInteractionEnabled = false
+        [imageView.widthAnchor, imageView.heightAnchor].forEach {
+            $0.constraint(equalToConstant: constant.imageWidth).isActive = true
+        }
         
         titleLabel = UILabel()
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = constant.maxNumberOfLines
         titleLabel.textColor = tintColor
-        titleLabel.isUserInteractionEnabled = false
         
         let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel])
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.alignment = .center
         stackView.spacing = 8
+        stackView.isUserInteractionEnabled = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
         
@@ -107,6 +109,7 @@ private extension BarItem {
     
     struct Constant {
         
+        let imageWidth: CGFloat = 32
         let unselectedOpacity: CGFloat = 0.7
         let maxNumberOfLines = 2
     }
