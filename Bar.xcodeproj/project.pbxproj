@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1D4F0819227238EC00558627 /* BarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4F0818227238EC00558627 /* BarDelegate.swift */; };
+		1DFBB42822728C5200D6F065 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DFBB42722728C5200D6F065 /* UIView.swift */; };
+		1DFBB42A22728C9300D6F065 /* NSLayoutAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DFBB42922728C9300D6F065 /* NSLayoutAnchor.swift */; };
 		1DFD53B7226FB52A006FF955 /* Bar.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DFD53B5226FB52A006FF955 /* Bar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1DFD53BE226FB5B3006FF955 /* Bar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DFD53BD226FB5B3006FF955 /* Bar.swift */; };
 		1DFD53C2226FC0E2006FF955 /* BarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DFD53C1226FC0E2006FF955 /* BarItem.swift */; };
@@ -16,6 +18,8 @@
 /* Begin PBXFileReference section */
 		1D3D27352271CE4E00550F96 /* Bar.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Bar.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		1D4F0818227238EC00558627 /* BarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarDelegate.swift; sourceTree = "<group>"; };
+		1DFBB42722728C5200D6F065 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
+		1DFBB42922728C9300D6F065 /* NSLayoutAnchor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSLayoutAnchor.swift; sourceTree = "<group>"; };
 		1DFD53B2226FB52A006FF955 /* Bar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Bar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DFD53B5226FB52A006FF955 /* Bar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bar.h; sourceTree = "<group>"; };
 		1DFD53B6226FB52A006FF955 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -59,6 +63,8 @@
 				1DFD53BD226FB5B3006FF955 /* Bar.swift */,
 				1DFD53C1226FC0E2006FF955 /* BarItem.swift */,
 				1D4F0818227238EC00558627 /* BarDelegate.swift */,
+				1DFBB42722728C5200D6F065 /* UIView.swift */,
+				1DFBB42922728C9300D6F065 /* NSLayoutAnchor.swift */,
 			);
 			path = Bar;
 			sourceTree = "<group>";
@@ -142,6 +148,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DFBB42A22728C9300D6F065 /* NSLayoutAnchor.swift in Sources */,
+				1DFBB42822728C5200D6F065 /* UIView.swift in Sources */,
 				1DFD53C2226FC0E2006FF955 /* BarItem.swift in Sources */,
 				1DFD53BE226FB5B3006FF955 /* Bar.swift in Sources */,
 				1D4F0819227238EC00558627 /* BarDelegate.swift in Sources */,

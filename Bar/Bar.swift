@@ -29,6 +29,7 @@ public class Bar: UIView {
     
     private var stackView: UIStackView!
     private var lineView: UIView!
+//    private var itemLineView: UIView!
     
     public convenience init() {
         self.init(frame: .zero)
@@ -69,7 +70,7 @@ public class Bar: UIView {
     
     func itemTapped(_ sender: BarItem) {
         
-        guard let index = controls.firstIndex(where: { $0 == sender }) else { return }
+        guard let index = controls.firstIndex(where: { $0 === sender }) else { return }
         delegate?.bar(self, willSelectIndex: index)
         selectedIndex = index
         delegate?.bar(self, didSelectIndex: index)
@@ -97,7 +98,12 @@ private extension Bar {
             lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
             lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
             lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing)])
+            lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing)/*,
+            itemLineView.heightAnchor.constraint(equalToConstant: layout.lineHeight),
+            itemLineView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            itemLineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing),
+            itemLineView.widthAnchor.constraint(equalToConstant: layout.itemWidth),
+            itemLineView.leadingAnchor.constraint(equalTo: leadingAnchor, identifier: Constant.Constraint.itemLineLeading.rawValue)*/])
         
         tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
@@ -119,6 +125,10 @@ private extension Bar {
         lineView = UIView(frame: .zero)
         lineView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(lineView)
+        
+//        itemLineView = UIView(frame: .zero)
+//        itemLineView.translatesAutoresizingMaskIntoConstraints = false
+//        addSubview(itemLineView)
     }
     
     func createItem(_ tab: Tab) -> BarItem {
@@ -152,6 +162,7 @@ private extension Bar {
     func updateColors() {
         
         lineView.backgroundColor = tintColor.withAlphaComponent(constant.lineOpacity)
+//        itemLineView.backgroundColor =  tintColor
         controls.forEach { $0.tintColor = tintColor }
     }
 }
@@ -181,6 +192,11 @@ public extension Bar {
     }
     
     private struct Constant {
+        
         let lineOpacity: CGFloat = 0.4
+        
+        enum Constraint: String {
+            case itemLineLeading
+        }
     }
 }
