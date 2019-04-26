@@ -10,14 +10,12 @@ class MyViewController : UIViewController {
     
     override func loadView() {
         
+        tabBar = Bar(frame: .zero)
+        
         let view = UIView()
         view.backgroundColor = .white
-        
-        tabBar = Bar(frame: .zero)
-//        tabBar.backgroundColor = UIColor.orange
-//        tabView.tintColor = .white
-//
         view.addSubview(tabBar)
+        
         self.view = view
     }
     
