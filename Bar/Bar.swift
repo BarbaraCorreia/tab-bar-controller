@@ -29,7 +29,7 @@ public class Bar: UIView {
     
     private var stackView: UIStackView!
     private var lineView: UIView!
-//    private var itemLineView: UIView!
+    private var itemLineView: UIView!
     
     public convenience init() {
         self.init(frame: .zero)
@@ -59,8 +59,18 @@ public class Bar: UIView {
     }
     
     public func add(items: [Tab]) {
+        
         items.forEach { self.add(item: $0) }
-        selectedIndex = 0
+        let currentIndex = selectedIndex
+        selectedIndex = currentIndex
+    }
+    
+    public func removeAll() {
+        
+        items.removeAll()
+        stackView.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
     }
 }
 
@@ -94,16 +104,15 @@ private extension Bar {
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: layout.topSpacing),
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            lineView.heightAnchor.constraint(equalToConstant: layout.lineHeight),
             lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
             lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
             lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing)/*,
+            lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing),
             itemLineView.heightAnchor.constraint(equalToConstant: layout.lineHeight),
-            itemLineView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            itemLineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing),
+            itemLineView.topAnchor.constraint(equalTo: lineView.topAnchor),
+            itemLineView.bottomAnchor.constraint(equalTo: lineView.bottomAnchor),
             itemLineView.widthAnchor.constraint(equalToConstant: layout.itemWidth),
-            itemLineView.leadingAnchor.constraint(equalTo: leadingAnchor, identifier: Constant.Constraint.itemLineLeading.rawValue)*/])
+            itemLineView.leadingAnchor.constraint(equalTo: lineView.leadingAnchor, identifier: Constant.Constraint.itemLineLeading.rawValue)])
         
         tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
@@ -126,9 +135,9 @@ private extension Bar {
         lineView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(lineView)
         
-//        itemLineView = UIView(frame: .zero)
-//        itemLineView.translatesAutoresizingMaskIntoConstraints = false
-//        addSubview(itemLineView)
+        itemLineView = UIView(frame: .zero)
+        itemLineView.translatesAutoresizingMaskIntoConstraints = false
+        lineView.addSubview(itemLineView)
     }
     
     func createItem(_ tab: Tab) -> BarItem {
@@ -162,7 +171,7 @@ private extension Bar {
     func updateColors() {
         
         lineView.backgroundColor = tintColor.withAlphaComponent(constant.lineOpacity)
-//        itemLineView.backgroundColor =  tintColor
+        itemLineView.backgroundColor = tintColor
         controls.forEach { $0.tintColor = tintColor }
     }
 }

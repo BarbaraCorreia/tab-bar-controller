@@ -11,8 +11,21 @@ import Bar
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var tabBar: Bar!
-
+    var tabBar: Bar!
+    
+    override func loadView() {
+        super.loadView()
+        
+        view.backgroundColor = #colorLiteral(red: 0.9019607843, green: 0.9019607843, blue: 0.9019607843, alpha: 1)
+        
+        tabBar = Bar()
+        view.addSubview(tabBar)
+        NSLayoutConstraint.activate([
+            tabBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)])
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
