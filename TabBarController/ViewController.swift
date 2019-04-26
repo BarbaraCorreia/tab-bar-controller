@@ -35,6 +35,7 @@ class ViewController: UIViewController {
         let tab4 = Bar.Tab(image: UIImage(named: "hammer"), title: "333")
         
         tabBar.add(items: [tab1, tab2, tab3, tab4])
+        tabBar.animated = true
     }
 }
 

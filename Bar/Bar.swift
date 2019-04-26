@@ -13,6 +13,7 @@ public class Bar: UIView {
     public var delegate: BarDelegate?
     
     public var layout = Layout()
+    public var animated = false
     public var selectedIndex: Int = 0 {
         didSet { updateSelection() }
     }
@@ -166,6 +167,8 @@ private extension Bar {
         
         controls.forEach { $0.isSelected = false }
         controls[selectedIndex].isSelected = true
+        
+        updateLineLayout()
     }
     
     func updateColors() {
@@ -173,6 +176,25 @@ private extension Bar {
         lineView.backgroundColor = tintColor.withAlphaComponent(constant.lineOpacity)
         itemLineView.backgroundColor = tintColor
         controls.forEach { $0.tintColor = tintColor }
+    }
+    
+    func updateLineLayout() {
+        
+        let view = controls[selectedIndex]
+        
+        #warning("Fix calculation of leading constraint")
+        let rect = view.convert(view.frame, to: self)
+        
+        let lineLeadingConstraint = lineView.constraint(withIdentifier: Constant.Constraint.itemLineLeading.rawValue)
+        lineLeadingConstraint?.constant = rect.origin.x
+        
+        if animated {
+            UIView.animate(withDuration: 0.33) { [weak self] in
+                self?.layoutIfNeeded()
+            }
+        } else {
+            layoutIfNeeded()
+        }
     }
 }
 

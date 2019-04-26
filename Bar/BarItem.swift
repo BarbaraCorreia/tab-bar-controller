@@ -52,7 +52,7 @@ class BarItem: UIControl {
     
     func setFont(_ font: UIFont, for state: UIControl.State) {
         fonts[state.rawValue] = font
-        // warning: improve this method
+        #warning("Improve this method")
         updateFonts()
     }
 }
