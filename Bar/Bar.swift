@@ -54,19 +54,22 @@ public class Bar: UIView {
     
     public func add(item: Tab) {
         
-        items.append(item)
         let view = createItem(item)
         stackView.addArrangedSubview(view)
+        items.append(item)
     }
     
     public func add(items: [Tab]) {
         
         items.forEach { self.add(item: $0) }
         let currentIndex = selectedIndex
+        layoutIfNeeded()
         selectedIndex = currentIndex
     }
     
     public func removeAll() {
+        
+        selectedIndex = 0
         
         items.removeAll()
         stackView.arrangedSubviews.forEach {
@@ -181,9 +184,7 @@ private extension Bar {
     func updateLineLayout() {
         
         let view = controls[selectedIndex]
-        
-        #warning("Fix calculation of leading constraint")
-        let rect = view.convert(view.frame, to: self)
+        let rect = stackView.convert(view.frame, to: lineView)
         
         let lineLeadingConstraint = lineView.constraint(withIdentifier: Constant.Constraint.itemLineLeading.rawValue)
         lineLeadingConstraint?.constant = rect.origin.x
