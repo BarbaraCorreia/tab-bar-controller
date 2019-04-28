@@ -11,6 +11,9 @@ import Bar
 
 final class TabBarViewController: UIViewController {
     
+    var animated = false
+    
+    private(set) var selectedIndex: Int = -1
     private(set) var tabs: [Tab] = []
     
     private var tabBar: Bar!
@@ -37,7 +40,7 @@ final class TabBarViewController: UIViewController {
         containerView.setContentHuggingPriority(UILayoutPriority(rawValue: 751), for: NSLayoutConstraint.Axis.vertical)
         view.addSubview(containerView)
         
-        pageViewController = UIPageViewController()
+        pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         NSLayoutConstraint.activate([
             tabBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -54,6 +57,9 @@ final class TabBarViewController: UIViewController {
         super.viewDidLoad()
         
         tabBar.add(items: tabs.compactMap({ $0.tab }))
+        tabBar.animated = animated
+        
+        selectPage(index: tabBar.selectedIndex)
     
         addChild(pageViewController)
         containerView.addSubview(pageViewController.view)
@@ -62,7 +68,7 @@ final class TabBarViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        selectPage(index: tabBar.selectedIndex)
+        selectPage(index: selectedIndex)
     }
     
     override func viewDidLayoutSubviews() {
@@ -84,10 +90,13 @@ private extension TabBarViewController {
     
     func selectPage(index: Int) {
         
-        guard !tabs.isEmpty, index >= 0, index < tabs.count else { return }
+        guard !tabs.isEmpty, index != selectedIndex, index >= 0, index < tabs.count else { return }
         
         let viewController = tabs[index].viewController
-        pageViewController.setViewControllers([viewController], direction: .forward, animated: false, completion: nil)
+        let direction: UIPageViewController.NavigationDirection = index > selectedIndex ? .forward : .reverse
+        pageViewController.setViewControllers([viewController], direction: direction, animated: animated, completion: nil)
+        
+        selectedIndex = index
     }
 }
 
