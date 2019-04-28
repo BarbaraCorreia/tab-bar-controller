@@ -142,6 +142,8 @@ private extension Bar {
         itemLineView = UIView(frame: .zero)
         itemLineView.translatesAutoresizingMaskIntoConstraints = false
         lineView.addSubview(itemLineView)
+        
+        itemLineView.isHidden = true
     }
     
     func createItem(_ tab: Tab) -> BarItem {
@@ -162,6 +164,7 @@ private extension Bar {
     
     func updateSelection() {
         
+        guard !items.isEmpty else { return }
         guard selectedIndex >= 0,
             selectedIndex < items.count else {
                 selectedIndex = 0
@@ -182,6 +185,8 @@ private extension Bar {
     }
     
     func updateLineLayout() {
+        
+        itemLineView.isHidden = false
         
         let view = controls[selectedIndex]
         let rect = stackView.convert(view.frame, to: lineView)

@@ -9,19 +9,23 @@
 import UIKit
 import Bar
 
-class TabBarViewController: UIViewController {
+final class TabBarViewController: UIViewController {
     
-    var tabBar: Bar!
-    var containerView: UIView!
+    private(set) var tabs: [Tab] = []
     
-    private let pageViewController = UIPageViewController()
+    private var tabBar: Bar!
+    private var containerView: UIView!
+    private var pageViewController: UIPageViewController!
+    
+    convenience init(tabs: [Tab]) {
+        self.init()
+        self.tabs = tabs
+    }
     
     override func loadView() {
         super.loadView()
         
         view.backgroundColor = #colorLiteral(red: 0.9019607843, green: 0.9019607843, blue: 0.9019607843, alpha: 1)
-        
-        pageViewController.view.backgroundColor = #colorLiteral(red: 0.9607843161, green: 0.7058823705, blue: 0.200000003, alpha: 1)
         
         tabBar = Bar()
         tabBar.delegate = self
@@ -32,6 +36,8 @@ class TabBarViewController: UIViewController {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.setContentHuggingPriority(UILayoutPriority(rawValue: 751), for: NSLayoutConstraint.Axis.vertical)
         view.addSubview(containerView)
+        
+        pageViewController = UIPageViewController()
         
         NSLayoutConstraint.activate([
             tabBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -47,16 +53,16 @@ class TabBarViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let tab1 = Bar.Tab(image: UIImage(named: "hammer"), title: "11111111111111111111111111")
-        let tab2 = Bar.Tab(image: UIImage(named: "hammer"), title: "222")
-        let tab3 = Bar.Tab(image: UIImage(named: "hammer"), title: "333")
-        
-        tabBar.add(items: [tab1, tab2, tab3])
-        tabBar.animated = true
-        
+        tabBar.add(items: tabs.compactMap({ $0.tab }))
+    
         addChild(pageViewController)
         containerView.addSubview(pageViewController.view)
         pageViewController.didMove(toParent: self)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        selectPage(index: tabBar.selectedIndex)
     }
     
     override func viewDidLayoutSubviews() {
@@ -70,21 +76,17 @@ extension TabBarViewController: BarDelegate {
     func bar(_ bar: Bar, willSelectIndex index: Int) {}
     
     func bar(_ bar: Bar, didSelectIndex index: Int) {
+        selectPage(index: index)
+    }
+}
+
+private extension TabBarViewController {
+    
+    func selectPage(index: Int) {
         
-        var viewController: UIViewController
+        guard !tabs.isEmpty, index >= 0, index < tabs.count else { return }
         
-        switch index {
-        case 0:
-            viewController = UIViewController()
-            viewController.view.backgroundColor = #colorLiteral(red: 0.9098039269, green: 0.4784313738, blue: 0.6431372762, alpha: 1)
-        case 1:
-            viewController = UIViewController()
-            viewController.view.backgroundColor = #colorLiteral(red: 0.8549019694, green: 0.250980407, blue: 0.4784313738, alpha: 1)
-        default:
-            viewController = UIViewController()
-            viewController.view.backgroundColor = #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1)
-        }
-        
+        let viewController = tabs[index].viewController
         pageViewController.setViewControllers([viewController], direction: .forward, animated: false, completion: nil)
     }
 }
