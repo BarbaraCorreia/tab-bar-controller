@@ -12,10 +12,14 @@ public class Bar: UIView {
     
     public var delegate: BarDelegate?
     
-    public var layout = Layout()
     public var animated = false
     public var selectedIndex: Int = 0 {
         didSet { updateSelection() }
+    }
+    public var layout = Layout() {
+        didSet {
+            updateLayout()
+        }
     }
     
     public override var tintColor: UIColor! {
@@ -106,16 +110,16 @@ private extension Bar {
         lineSetup()
         
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor, constant: layout.topSpacing),
-            stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: layout.topSpacing, identifier: Constant.Constraint.stackViewTop.rawValue),
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor, identifier: Constant.Constraint.stackViewCenterX.rawValue),
             lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
             lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
             lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing),
-            itemLineView.heightAnchor.constraint(equalToConstant: layout.lineHeight),
+            lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing, identifier: Constant.Constraint.stackViewBottom.rawValue),
+            itemLineView.heightAnchor.constraint(equalToConstant: layout.lineHeight, identifier: Constant.Constraint.lineHeight.rawValue),
             itemLineView.topAnchor.constraint(equalTo: lineView.topAnchor),
             itemLineView.bottomAnchor.constraint(equalTo: lineView.bottomAnchor),
-            itemLineView.widthAnchor.constraint(equalToConstant: layout.itemWidth),
+            itemLineView.widthAnchor.constraint(equalToConstant: layout.itemWidth, identifier: Constant.Constraint.itemWidth.rawValue),
             itemLineView.leadingAnchor.constraint(equalTo: lineView.leadingAnchor, identifier: Constant.Constraint.itemLineLeading.rawValue)])
         
         tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
@@ -128,7 +132,7 @@ private extension Bar {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.distribution = .fill
-        stackView.alignment = .fill
+        stackView.alignment = layout.alignment
         stackView.spacing = layout.itemSpacing
         addSubview(stackView)
     }
@@ -149,7 +153,7 @@ private extension Bar {
     func createItem(_ tab: Tab) -> BarItem {
         
         let view = BarItem()
-        view.widthAnchor.constraint(equalToConstant: layout.itemWidth).isActive = true
+        view.widthAnchor.constraint(equalToConstant: layout.itemWidth, identifier: Constant.Constraint.itemWidth.rawValue).isActive = true
         
         view.addTarget(self, action: #selector(itemTapped(_:)), for: .touchUpInside)
         
@@ -182,6 +186,38 @@ private extension Bar {
         lineView.backgroundColor = tintColor.withAlphaComponent(constant.lineOpacity)
         itemLineView.backgroundColor = tintColor
         controls.forEach { $0.tintColor = tintColor }
+    }
+    
+    func updateLayout() {
+        
+        // TODO: add and remove constraints because view.constraints array only has active constraints ( inactive constraints are not added to the view)
+        constraint(withIdentifier: Constant.Constraint.stackViewCenterX.rawValue)?.isActive = layout.alignment != .leading && layout.alignment != .trailing
+        
+        let leadingConstraint = constraint(withIdentifier: Constant.Constraint.stackViewLeading.rawValue)
+        leadingConstraint?.constant = layout.itemSpacing
+        leadingConstraint?.isActive = layout.alignment == .leading
+        let trailingConstraint = constraint(withIdentifier: Constant.Constraint.stackViewTrailing.rawValue)
+        trailingConstraint?.constant = layout.itemSpacing
+        trailingConstraint?.isActive = layout.alignment == .trailing
+        
+        stackView.alignment = layout.alignment == .firstBaseline || layout.alignment == .lastBaseline ? .fill : layout.alignment
+        stackView.spacing = layout.itemSpacing
+        
+        let stackViewTopConstraint = stackView.constraint(withIdentifier: Constant.Constraint.stackViewTop.rawValue)
+        stackViewTopConstraint?.constant = layout.topSpacing
+        let stackViewBottomConstraint = stackView.constraint(withIdentifier: Constant.Constraint.stackViewBottom.rawValue)
+        stackViewBottomConstraint?.constant = layout.bottomSpacing
+        let itemLineHeightConstraint = itemLineView.constraint(withIdentifier: Constant.Constraint.lineHeight.rawValue)
+        itemLineHeightConstraint?.constant = layout.lineHeight
+        let itemLineWidthConstraint = itemLineView.constraint(withIdentifier: Constant.Constraint.itemWidth.rawValue)
+        itemLineWidthConstraint?.constant = layout.itemWidth
+        
+        controls.forEach {
+            let constraint = $0.constraint(withIdentifier: Constant.Constraint.itemWidth.rawValue)
+            constraint?.constant = layout.itemWidth
+        }
+        
+        layoutIfNeeded()
     }
     
     func updateLineLayout() {
@@ -221,11 +257,15 @@ public extension Bar {
     
     final class Layout {
         
-        var itemWidth: CGFloat = 70
-        var itemSpacing: CGFloat = 1
-        var lineHeight: CGFloat = 2
-        var topSpacing: CGFloat = 10
-        var bottomSpacing: CGFloat = 6
+        public var itemWidth: CGFloat = 70
+        public var itemSpacing: CGFloat = 1
+        public var lineHeight: CGFloat = 2
+        public var topSpacing: CGFloat = 10
+        public var bottomSpacing: CGFloat = 6
+        
+        public var alignment: UIStackView.Alignment = .fill
+        
+        public init() {}
     }
     
     private struct Constant {
@@ -233,7 +273,14 @@ public extension Bar {
         let lineOpacity: CGFloat = 0.4
         
         enum Constraint: String {
+            case itemWidth
             case itemLineLeading
+            case lineHeight
+            case stackViewTop
+            case stackViewBottom
+            case stackViewLeading
+            case stackViewTrailing
+            case stackViewCenterX
         }
     }
 }
