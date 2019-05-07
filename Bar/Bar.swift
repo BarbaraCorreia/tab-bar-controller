@@ -32,6 +32,8 @@ public class Bar: UIView {
     private var fonts: [UInt: UIFont] = [UIControl.State.normal.rawValue: UIFont.systemFont(ofSize: 12),
                                          UIControl.State.selected.rawValue: UIFont.systemFont(ofSize: 12, weight: .bold)]
     
+    private var scrollView: UIScrollView!
+    private var contentView: UIView!
     private var stackView: UIStackView!
     private var lineView: UIView!
     private var itemLineView: UIView!
@@ -106,6 +108,7 @@ private extension Bar {
     
     func setup() {
         
+        scrollViewSetup()
         stackViewSetup()
         lineSetup()
         
@@ -113,6 +116,19 @@ private extension Bar {
         
         tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+    }
+    
+    func scrollViewSetup() {
+        
+        scrollView = UIScrollView(frame: .zero)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        addSubview(scrollView)
+        
+        contentView = UIView(frame: .zero)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(contentView)
     }
     
     func stackViewSetup() {
@@ -123,14 +139,14 @@ private extension Bar {
         stackView.distribution = .fill
         stackView.alignment = layout.alignment
         stackView.spacing = layout.itemSpacing
-        addSubview(stackView)
+        contentView.addSubview(stackView)
     }
     
     func lineSetup() {
         
         lineView = UIView(frame: .zero)
         lineView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(lineView)
+        contentView.addSubview(lineView)
         
         itemLineView = UIView(frame: .zero)
         itemLineView.translatesAutoresizingMaskIntoConstraints = false
@@ -141,12 +157,25 @@ private extension Bar {
     
     func constraintsSetup() {
         
+        let contentViewWidthConstraint = contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        contentViewWidthConstraint.priority = UILayoutPriority.defaultLow
+        
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor, constant: layout.topSpacing, identifier: Constant.Constraint.stackViewTop.rawValue),
-            stackView.centerXAnchor.constraint(equalTo: centerXAnchor, identifier: Constant.Constraint.stackViewCenterX.rawValue),
-            lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
+            contentViewWidthConstraint,
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: layout.topSpacing, identifier: Constant.Constraint.stackViewTop.rawValue),
+            stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, identifier: Constant.Constraint.stackViewCenterX.rawValue),
+            lineView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            lineView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            lineView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing, identifier: Constant.Constraint.stackViewBottom.rawValue),
             itemLineView.heightAnchor.constraint(equalToConstant: layout.lineHeight, identifier: Constant.Constraint.lineHeight.rawValue),
             itemLineView.topAnchor.constraint(equalTo: lineView.topAnchor),
@@ -195,25 +224,25 @@ private extension Bar {
     
     func updateLayout() {
         
-        var constraint = self.constraint(withIdentifier: Constant.Constraint.stackViewCenterX.rawValue)
+        var constraint = contentView.constraint(withIdentifier: Constant.Constraint.stackViewCenterX.rawValue)
         
         switch layout.alignment {
         case .leading:
             let identifier = Constant.Constraint.stackViewLeading.rawValue
-            if self.constraint(withIdentifier: identifier) == nil {
+            if contentView.constraint(withIdentifier: identifier) == nil {
                 constraint = stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: layout.itemSpacing, identifier: identifier)
             }
         case .trailing:
             let identifier = Constant.Constraint.stackViewTrailing.rawValue
-            if self.constraint(withIdentifier: identifier) == nil {
+            if contentView.constraint(withIdentifier: identifier) == nil {
                 constraint = stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: layout.itemSpacing, identifier: identifier)
             }
         default: break
         }
         
-        self.constraint(withIdentifier: Constant.Constraint.stackViewCenterX.rawValue)?.isActive = false
-        self.constraint(withIdentifier: Constant.Constraint.stackViewLeading.rawValue)?.isActive = false
-        self.constraint(withIdentifier: Constant.Constraint.stackViewTrailing.rawValue)?.isActive = false
+        contentView.constraint(withIdentifier: Constant.Constraint.stackViewCenterX.rawValue)?.isActive = false
+        contentView.constraint(withIdentifier: Constant.Constraint.stackViewLeading.rawValue)?.isActive = false
+        contentView.constraint(withIdentifier: Constant.Constraint.stackViewTrailing.rawValue)?.isActive = false
         
         constraint?.isActive = true
         constraint?.constant = layout.itemSpacing
