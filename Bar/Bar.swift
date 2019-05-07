@@ -109,18 +109,7 @@ private extension Bar {
         stackViewSetup()
         lineSetup()
         
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor, constant: layout.topSpacing, identifier: Constant.Constraint.stackViewTop.rawValue),
-            stackView.centerXAnchor.constraint(equalTo: centerXAnchor, identifier: Constant.Constraint.stackViewCenterX.rawValue),
-            lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing, identifier: Constant.Constraint.stackViewBottom.rawValue),
-            itemLineView.heightAnchor.constraint(equalToConstant: layout.lineHeight, identifier: Constant.Constraint.lineHeight.rawValue),
-            itemLineView.topAnchor.constraint(equalTo: lineView.topAnchor),
-            itemLineView.bottomAnchor.constraint(equalTo: lineView.bottomAnchor),
-            itemLineView.widthAnchor.constraint(equalToConstant: layout.itemWidth, identifier: Constant.Constraint.itemWidth.rawValue),
-            itemLineView.leadingAnchor.constraint(equalTo: lineView.leadingAnchor, identifier: Constant.Constraint.itemLineLeading.rawValue)])
+        constraintsSetup()
         
         tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         backgroundColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
@@ -148,6 +137,22 @@ private extension Bar {
         lineView.addSubview(itemLineView)
         
         itemLineView.isHidden = true
+    }
+    
+    func constraintsSetup() {
+        
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: layout.topSpacing, identifier: Constant.Constraint.stackViewTop.rawValue),
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor, identifier: Constant.Constraint.stackViewCenterX.rawValue),
+            lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            lineView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: layout.bottomSpacing, identifier: Constant.Constraint.stackViewBottom.rawValue),
+            itemLineView.heightAnchor.constraint(equalToConstant: layout.lineHeight, identifier: Constant.Constraint.lineHeight.rawValue),
+            itemLineView.topAnchor.constraint(equalTo: lineView.topAnchor),
+            itemLineView.bottomAnchor.constraint(equalTo: lineView.bottomAnchor),
+            itemLineView.widthAnchor.constraint(equalToConstant: layout.itemWidth, identifier: Constant.Constraint.itemWidth.rawValue),
+            itemLineView.leadingAnchor.constraint(equalTo: lineView.leadingAnchor, identifier: Constant.Constraint.itemLineLeading.rawValue)])
     }
     
     func createItem(_ tab: Tab) -> BarItem {
@@ -190,15 +195,28 @@ private extension Bar {
     
     func updateLayout() {
         
-        // TODO: add and remove constraints because view.constraints array only has active constraints ( inactive constraints are not added to the view)
-        constraint(withIdentifier: Constant.Constraint.stackViewCenterX.rawValue)?.isActive = layout.alignment != .leading && layout.alignment != .trailing
+        var constraint = self.constraint(withIdentifier: Constant.Constraint.stackViewCenterX.rawValue)
         
-        let leadingConstraint = constraint(withIdentifier: Constant.Constraint.stackViewLeading.rawValue)
-        leadingConstraint?.constant = layout.itemSpacing
-        leadingConstraint?.isActive = layout.alignment == .leading
-        let trailingConstraint = constraint(withIdentifier: Constant.Constraint.stackViewTrailing.rawValue)
-        trailingConstraint?.constant = layout.itemSpacing
-        trailingConstraint?.isActive = layout.alignment == .trailing
+        switch layout.alignment {
+        case .leading:
+            let identifier = Constant.Constraint.stackViewLeading.rawValue
+            if self.constraint(withIdentifier: identifier) == nil {
+                constraint = stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: layout.itemSpacing, identifier: identifier)
+            }
+        case .trailing:
+            let identifier = Constant.Constraint.stackViewTrailing.rawValue
+            if self.constraint(withIdentifier: identifier) == nil {
+                constraint = stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: layout.itemSpacing, identifier: identifier)
+            }
+        default: break
+        }
+        
+        self.constraint(withIdentifier: Constant.Constraint.stackViewCenterX.rawValue)?.isActive = false
+        self.constraint(withIdentifier: Constant.Constraint.stackViewLeading.rawValue)?.isActive = false
+        self.constraint(withIdentifier: Constant.Constraint.stackViewTrailing.rawValue)?.isActive = false
+        
+        constraint?.isActive = true
+        constraint?.constant = layout.itemSpacing
         
         stackView.alignment = layout.alignment == .firstBaseline || layout.alignment == .lastBaseline ? .fill : layout.alignment
         stackView.spacing = layout.itemSpacing
