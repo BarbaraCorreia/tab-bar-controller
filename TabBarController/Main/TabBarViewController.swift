@@ -30,7 +30,11 @@ final class TabBarViewController: UIViewController {
         
         view.backgroundColor = #colorLiteral(red: 0.9019607843, green: 0.9019607843, blue: 0.9019607843, alpha: 1)
         
+//        let layout = Bar.Layout()
+//        layout.alignment = .center
+        
         tabBar = Bar()
+//        tabBar.layout = layout
         tabBar.delegate = self
         tabBar.setContentHuggingPriority(UILayoutPriority(rawValue: 753), for: NSLayoutConstraint.Axis.vertical)
         view.addSubview(tabBar)
